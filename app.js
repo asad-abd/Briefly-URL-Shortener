@@ -1,48 +1,49 @@
-const express = require('express');
+const express = require("express");
+const cors = require("cors");
 const app = express();
-const {
-    getLongUrl,
-    addOrUpdateUrl,
-    deleteUrl,
-} = require('./dynamo');
+const { getLongUrl, addOrUpdateUrl, deleteUrl } = require("./dynamo");
 
 app.use(express.json());
+app.use(cors());
 
-app.get('/', (req, res) => {
-    res.send('Welcome to briefly - URL shortner!');
+app.get("/", (req, res) => {
+  res.send("Welcome to briefly - URL shortner!");
 });
 
-app.get('/:shortUrl', async (req, res) => {
-    const shortUrl = req.params.shortUrl;
-    try {
-        const item = await getLongUrl(shortUrl);
-        //add http redirect here (to the long url)
-        console.log(item);
-        res.json(item);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ err: 'Something went wrong' });
-    }
+app.get("/:shortUrl", async (req, res) => {
+  const shortUrl = req.params.shortUrl;
+  try {
+    const item = await getLongUrl(shortUrl);
+    //add http redirect here (to the long url)
+    console.log(item);
+    res.json(item);
+    //res.status(201).json({ res: "Something went wrong" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ err: "Something went wrong" });
+  }
 });
 
-app.put('/shorten/:longUrl', async (req, res) => {
-    const longUrl = req.params.longUrl;
-    //generate the shortURL here
+app.put("/shorten/", async (req, res) => {
+  const longUrl = req.body.longUrl;
+  const daysLater = req.body.expiry;
+  //generate the shortURL here
 
-    //get expiry date in unix epoch timestamp
-    var today = new Date();
-    const expiryDate = Math.floor(new Date(new Date().setDate(today.getDate() + 30)).getTime() / 1000)
+  //get expiry date in unix epoch timestamp
+  var today = new Date();
+  const expiryDate = Math.floor(
+    new Date(new Date().setDate(today.getDate() + daysLater)).getTime() / 1000
+  );
 
-    const item = {short : longUrl, long : longUrl, expiry : expiryDate};
+  const item = { short: longUrl, long: longUrl, expiry: expiryDate };
 
-
-    try {
-        const newItem = await addOrUpdateUrl(item);
-        res.json(newItem);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ err: 'Something went wrong' });
-    }
+  try {
+    const newItem = await addOrUpdateUrl(item);
+    res.json(newItem);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ err: "Something went wrong" });
+  }
 });
 
 /*app.delete('/characters/:id', async (req, res) => {
@@ -55,7 +56,7 @@ app.put('/shorten/:longUrl', async (req, res) => {
     }
 });*/
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 app.listen(port, () => {
-    console.log(`listening on port `+ port);
+  console.log(`listening on port ` + port);
 });
