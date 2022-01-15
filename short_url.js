@@ -1,5 +1,8 @@
-    const longUrl = req.params.longUrl;
-    var crypto = require('crypto');
+const crypto = require('crypto');
+const { getLongUrl, addOrUpdateUrl, deleteUrl } = require("./dynamo");
+function short_url_gen(longUrl){    
+    
+    
     
     var hash = crypto.createHash('md5').update(longUrl).digest('hex');
     function idTochar(n) {
@@ -30,25 +33,9 @@
         char_base64.push(idTochar(num));
     }
   console.log(char_base64);
+  hashed_string = char_base64.join("")
+  return hashed_string
 
-    for (let i = 0; i < 15; i++) {
-        let stg = "";
-        for (let j = 0; j < 6; j++) {
-            stg = stg.concat(char_base64[j + i]);
-        }
-        console.log("how many time");
-        try {
-            const item =  await getLongUrl(stg);
-            console.log(item);
-            if (item['Item']['long'] == longUrl) {
-                res.json(item);
-                console.log("same Url ");
-                break;
-            }
-        } catch (err) {
-            const item = { short: stg, long: longUrl };
-            const newItem = await addOrUpdateUrl(item);
-            res.json(newItem);
-            break;
-        }
-    }
+}
+
+module.exports=short_url_gen
