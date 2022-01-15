@@ -23,12 +23,8 @@ function Copyright(props) {
       align="center"
       {...props}
     >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        CSD: Group 3
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
+      {" "}
+      CSD: Group 3{"."}
     </Typography>
   );
 }
@@ -37,26 +33,31 @@ const theme = createTheme();
 
 export default function SignIn() {
   const [longUrl, setLongUrl] = useState("");
+  const [custom, setCustom] = useState("");
   const [expiry, setExpiry] = useState("30");
   const [emptyError, setEmptyError] = useState(false);
+  const [customLengthError, setCustomLengthError] = useState(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     if (longUrl.length === 0) {
       setEmptyError(true);
+    } else if (custom.length !== 6 && custom.length !== 0) {
+      setCustomLengthError(true);
     } else {
-      setEmptyError(false);
-      console.log(longUrl);
+      if (customLengthError === true) setCustomLengthError(false);
+      if (emptyError === true) setEmptyError(false);
+      console.log(expiry);
 
       axios
         .put("http://localhost:3001/shorten", {
           longUrl: longUrl,
           expiry: expiry,
+          customUrl: custom,
         })
         .then(function (response) {
-          console.log("hello");
           alert("buffallo");
-          console.log(response.data.short);
+          console.log(response);
         })
         .catch(function (error) {
           if (error.response) {
@@ -99,15 +100,12 @@ export default function SignIn() {
               fullWidth
               value={longUrl}
               onChange={(e) => setLongUrl(e.target.value)}
-              //id="longURL"
               label="Enter the URL to shorten"
-              //name="longURL"
-              /*autoComplete="email"*/
               autoFocus
             />
             <FormControl fullWidth>
               <InputLabel variant="standard" htmlFor="uncontrolled-native">
-                Short URL Expiry (in days from creation)
+                Short URL Expiry (in days from now)
               </InputLabel>
               <NativeSelect
                 defaultValue={30}
@@ -127,20 +125,14 @@ export default function SignIn() {
                 <option value={30}>30</option>
               </NativeSelect>
             </FormControl>
-            {/* <TextField
-              margin="normal"
-              fullWidth
-              value={expiry}
-              onChange={(e) => setExpiry(e.target.value)}
-              label="Expiry date of short URL (in days)"
-              autoFocus
-            /> */}
             <TextField
               margin="normal"
+              error={customLengthError}
               fullWidth
-              id="custom"
+              value={custom}
+              onChange={(e) => setCustom(e.target.value)}
+              inputProps={{ maxLength: 6 }}
               label="Custom Url (only 6 character long from [a-z, A-Z, 0-9]"
-              name="custom"
               autoFocus
             />
             <Button

@@ -42,7 +42,7 @@ app.put("/shorten/", async (req, res) => {
     new Date(new Date().setDate(today.getDate() + daysLater)).getTime() / 1000
   );
 
-  if (typeof customUrl == "undefined") {
+  if (typeof customUrl == "undefined" || customUrl.length === 0) {
     const short = short_url_gen(longUrl);
     let stg = short.substring(0, 6);
 
@@ -51,7 +51,7 @@ app.put("/shorten/", async (req, res) => {
 
       if (Object.keys(item).length !== 0) {
         if (item["Item"]["long"] == longUrl) {
-          res.send(stg);
+          res.send(item);
         }
       } else {
         for (let i = 0; i < 15; i++) {
@@ -62,7 +62,7 @@ app.put("/shorten/", async (req, res) => {
             if (Object.keys(item).length !== 0) {
               continue;
             } else {
-              var item = { short: stg, long: longUrl };
+              const item = { short: stg, long: longUrl, expiry: expiryDate };
               const newItem = await addOrUpdateUrl(item);
               res.send(item);
               console.log("msg : Success");
@@ -82,6 +82,7 @@ app.put("/shorten/", async (req, res) => {
     const item = { short: customUrl, long: longUrl, expiry: expiryDate };
     try {
       const newItem = await addOrUpdateUrl(item);
+      res.send(item);
       res.status(200).json({ msg: "Success" });
     } catch (err) {
       console.error(err);
