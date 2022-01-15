@@ -1,42 +1,53 @@
-// Function to generate a short url from integer ID
-function idToShortURL(n)
-{
+    const longUrl = req.params.longUrl;
+    var crypto = require('crypto');
+    
+    var hash = crypto.createHash('md5').update(longUrl).digest('hex');
+    function idTochar(n) {
 
-	let map = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        let map = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-";
+        return map[n];
+    }
 
-	let shorturl = [];
+    function hexByteStringToBitArray(hexByteString) {
+        var bits = [];
+        for (var i = 0; i < hexByteString.length;) {
+            var hexByte = hexByteString[i++] + hexByteString[i++];
+            var byte = parseInt(hexByte, 16);
+            for (var j = 7; j >= 0; j--) {
+                var bit = (byte >> j) & 0x1;
+                bits.push(bit);
+            }
+        }
+        return bits;
+    }
+    bit_array = hexByteStringToBitArray(hash);
+    let char_base64 = [];
+    for (let i = 0; i < 21; i++) {
+        let num = 0;
+        for (let j = 0 + i * 6; j < i * 6 + 6; j++) {
+            num = num + Math.pow(2, 5 - (j - i * 6)) * bit_array[j];
+        }
+        char_base64.push(idTochar(num));
+    }
+  console.log(char_base64);
 
-	while (n)
-	{
-        shorturl.push(map[n % 62]);
-        n = Math.floor(n / 62);
-        
-	}
-    let b=shorturl.length;
-    for(let i=0;i<6-b;i++)
-     shorturl.push('a');
-	
-	shorturl.reverse();
-
-	return shorturl.join("");
-}
-
-// Function to get integer ID back from a short url
-function shortURLtoID(shortURL) {
-	let id = 0; 
-	for (let i = 0; i < shortURL.length; i++) {
-		if ('a' <= shortURL[i] && shortURL[i] <= 'z')
-			id = id * 62 + shortURL[i].charCodeAt(0) - 'a'.charCodeAt(0);
-		if ('A' <= shortURL[i] && shortURL[i] <= 'Z')
-			id = id * 62 + shortURL[i].charCodeAt(0) - 'A'.charCodeAt(0) + 26;
-		if ('0' <= shortURL[i] && shortURL[i] <= '9')
-			id = id * 62 + shortURL[i].charCodeAt(0) - '0'.charCodeAt(0) + 52;
-	}
-	return id;
-}
-
-let n = 1000011;
-let shorturl = idToShortURL(n);
-console.log("Generated short url is " + shorturl );
-console.log("Id from url is " + shortURLtoID(shorturl));
-
+    for (let i = 0; i < 15; i++) {
+        let stg = "";
+        for (let j = 0; j < 6; j++) {
+            stg = stg.concat(char_base64[j + i]);
+        }
+        console.log("how many time");
+        try {
+            const item =  await getLongUrl(stg);
+            console.log(item);
+            if (item['Item']['long'] == longUrl) {
+                res.json(item);
+                console.log("same Url ");
+                break;
+            }
+        } catch (err) {
+            const item = { short: stg, long: longUrl };
+            const newItem = await addOrUpdateUrl(item);
+            res.json(newItem);
+            break;
+        }
