@@ -89,7 +89,7 @@ export default function SignIn() {
             <HttpOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            URL Shortner
+            URL Shortener
           </Typography>
 
           <Box
