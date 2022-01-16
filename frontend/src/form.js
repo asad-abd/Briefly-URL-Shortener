@@ -13,7 +13,6 @@ import axios from "axios";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import NativeSelect from "@mui/material/NativeSelect";
-import Alert from "@mui/material/Alert";
 
 function Copyright(props) {
   return (
@@ -37,6 +36,7 @@ export default function SignIn() {
   const [expiry, setExpiry] = useState("30");
   const [emptyError, setEmptyError] = useState(false);
   const [customLengthError, setCustomLengthError] = useState(false);
+  const [shortUrl, setShortUrl] = useState("");
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -56,7 +56,12 @@ export default function SignIn() {
           customUrl: custom,
         })
         .then(function (response) {
-          alert("buffallo");
+          if (response?.err) {
+            alert(response?.err);
+          } else {
+            alert("Successful");
+            setShortUrl(response.data);
+          }
           console.log(response);
         })
         .catch(function (error) {
@@ -135,6 +140,11 @@ export default function SignIn() {
               label="Custom Url (only 6 character long from [a-z, A-Z, 0-9]"
               autoFocus
             />
+            {shortUrl !== "" && (
+              <a href={shortUrl} target="__blank">
+                {shortUrl}
+              </a>
+            )}
             <Button
               type="submit"
               fullWidth

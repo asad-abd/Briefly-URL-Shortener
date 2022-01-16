@@ -3,7 +3,8 @@ const { getLongUrl, addOrUpdateUrl, deleteUrl } = require("./dynamo");
 function short_url_gen(longUrl) {
   var hash = crypto.createHash("md5").update(longUrl).digest("hex");
   function idTochar(n) {
-    let map = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let map =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
     return map[n];
   }
 
