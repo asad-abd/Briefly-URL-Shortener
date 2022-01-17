@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(cors());
 
 app.get("/", (req, res) => {
-  res.send("Welcome to briefly - URL shortner!");
+  res.send("Welcome to briefly - URL shortener!");
 });
 
 // long Url fetching endpoints
@@ -125,7 +125,6 @@ app.put("/shorten/", async (req, res) => {
         try {
           const newItem = await addOrUpdateUrl(item);
           res.send(process.env.AWS_HOST_URL + item["short"]);
-          res.status(200).json({ msg: "Success" });
         } catch (err) {
           console.error(err);
           res.status(500).json({ err: "Something went wrong" });

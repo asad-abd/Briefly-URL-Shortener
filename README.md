@@ -1,3 +1,6 @@
+![Landing Page](landing.jpg)
+![Short Url Generated](shortUrlGenerated.jpg)
+
 ## Steps to install the application locally
 
 1. Download the code and in the folder run `npm install` to install the node dependencies.
@@ -19,3 +22,4 @@
 
 Inside the folder 'frontend' run `npm start`.
 This will start the React application on port `localhost:3000`
+

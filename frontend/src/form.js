@@ -50,11 +50,14 @@ export default function SignIn() {
       console.log(expiry);
 
       axios
-        .put("http://localhost:3001/shorten", {
-          longUrl: longUrl,
-          expiry: expiry,
-          customUrl: custom,
-        })
+        .put(
+          "http://ec2-52-66-88-54.ap-south-1.compute.amazonaws.com:3001/shorten",
+          {
+            longUrl: longUrl,
+            expiry: expiry,
+            customUrl: custom,
+          }
+        )
         .then(function (response) {
           if (response?.err) {
             alert(response?.err);
