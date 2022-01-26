@@ -48,16 +48,13 @@ export default function SignIn() {
       if (customLengthError === true) setCustomLengthError(false);
       if (emptyError === true) setEmptyError(false);
       console.log(expiry);
-
+      //http://ec2-52-66-88-54.ap-south-1.compute.amazonaws.com:3001/shorten
       axios
-        .put(
-          "http://ec2-52-66-88-54.ap-south-1.compute.amazonaws.com:3001/shorten",
-          {
-            longUrl: longUrl,
-            expiry: expiry,
-            customUrl: custom,
-          }
-        )
+        .put("http://localhost:3001/shorten", {
+          longUrl: longUrl,
+          expiry: expiry,
+          customUrl: custom,
+        })
         .then(function (response) {
           if (response?.err) {
             alert(response?.err);

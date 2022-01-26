@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const { getLongUrl, addOrUpdateUrl, deleteUrl } = require("./dynamo");
+const { getLongUrl, addOrUpdateUrl, deleteUrl } = require("../dynamo");
 function short_url_gen(longUrl) {
   var hash = crypto.createHash("md5").update(longUrl).digest("hex");
   function idTochar(n) {

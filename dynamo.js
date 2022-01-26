@@ -7,11 +7,12 @@ AWS.config.update({
 });
 
 const dynamoClient = new AWS.DynamoDB.DocumentClient();
-const TABLE_NAME = "short_to_long_url";
+const URLS = "short_to_long_url";
+const USERS = "dev_keys";
 
 const getLongUrl = async (short) => {
   const params = {
-    TableName: TABLE_NAME,
+    TableName: URLS,
     Key: {
       short,
     },
@@ -21,7 +22,7 @@ const getLongUrl = async (short) => {
 
 const addOrUpdateUrl = async (item) => {
   const params = {
-    TableName: TABLE_NAME,
+    TableName: URLS,
     Item: item,
   };
   return await dynamoClient.put(params).promise();
@@ -29,7 +30,7 @@ const addOrUpdateUrl = async (item) => {
 
 const deleteUrl = async (short) => {
   const params = {
-    TableName: TABLE_NAME,
+    TableName: URLS,
     Key: {
       short,
     },
@@ -37,9 +38,28 @@ const deleteUrl = async (short) => {
   return await dynamoClient.delete(params).promise();
 };
 
+const getUser = async (email) => {
+  const params = {
+    TableName: USERS,
+    Key: {
+      email,
+    },
+  };
+  return await dynamoClient.get(params).promise();
+};
+
+const addUser = async (item) => {
+  const params = {
+    TableName: USERS,
+    Item: item,
+  };
+  return await dynamoClient.put(params).promise();
+};
 module.exports = {
   dynamoClient,
   getLongUrl,
   addOrUpdateUrl,
   deleteUrl,
+  getUser,
+  addUser,
 };
