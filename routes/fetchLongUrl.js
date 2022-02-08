@@ -16,6 +16,8 @@ module.exports = function (app) {
       //res.json(item);
       if (itemExists(item)) {
         console.log(item["Item"]["long"]);
+        item["Item"]["clicks"]++;
+        console.log("No of clicks are : ," + item["Item"]["clicks"]);
         return res.redirect(item["Item"]["long"]);
       }
 
