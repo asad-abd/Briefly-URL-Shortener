@@ -58,7 +58,7 @@ module.exports = function (app) {
               if (Object.keys(item).length !== 0) {
                 continue;
               } else {
-                const item = { short: stg, long: longUrl, expiry: expiryDate };
+                const item = { short: stg, long: longUrl, expiry: expiryDate,clicks:0 };
                 const newItem = await addOrUpdateUrl(item);
                 res.send(process.env.AWS_HOST_URL + item["short"]);
                 console.log("msg : Success");
@@ -93,7 +93,7 @@ module.exports = function (app) {
         if (Object.keys(fetchItem).length !== 0) {
           res.status(400).json({ err: "Short Url already taken" });
         } else {
-          const item = { short: customUrl, long: longUrl, expiry: expiryDate };
+          const item = { short: customUrl, long: longUrl, expiry: expiryDate,clicks:0 };
           try {
             const newItem = await addOrUpdateUrl(item);
             res.send(process.env.AWS_HOST_URL + item["short"]);
