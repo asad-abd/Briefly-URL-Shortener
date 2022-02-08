@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({path: '../.env'});
 const express = require("express");
 const { getLongUrl, addOrUpdateUrl, deleteUrl } = require("../dynamo");
 const itemExists = require("../utils/utils.js");
