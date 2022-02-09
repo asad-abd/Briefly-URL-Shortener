@@ -25,6 +25,8 @@ require("./routes/createShortUrl")(app);
 require("./routes/fetchLongUrl")(app);
 // Dev Key fetching/creation endpoint
 require("./routes/getDevKey")(app);
+// Doc upload to S3 endpoint
+require("./routes/pastebin")(app);
 
 app.get("/", (req, res) => {
   res.send("Welcome to briefly - URL shortener!");

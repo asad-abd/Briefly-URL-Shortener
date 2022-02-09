@@ -7,5 +7,11 @@ function itemExists(item) {
     return false;
   return true;
 }
-
-module.exports = itemExists;
+function isValidCustomUrl(str) {
+  var pattern = new RegExp("^[a-zA-Z0-9_-]*$"); // fragment locator
+  return !!pattern.test(str);
+}
+module.exports = {
+  itemExists,
+  isValidCustomUrl,
+};
