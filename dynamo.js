@@ -64,7 +64,23 @@ const addUser = async (item) => {
 };
 
 // S3 upload function
+function fileFilter(req, file, cb) {
+  // Allowed ext
+  const filetypes = /jpeg|jpg|png|gif/;
+
+  // Check ext
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  // Check mime
+  const mimetype = filetypes.test(file.mimetype);
+
+  if (mimetype && extname) {
+    return cb(null, true);
+  } else {
+    cb("Error: Images Only!");
+  }
+}
 const upload = multer({
+  fileFilter: fileFilter,
   storage: multerS3({
     s3,
     bucket: "briefly-bucket",
@@ -76,7 +92,19 @@ const upload = multer({
       cb(null, `${uuid()}${ext}`);
     },
   }),
+  limits: {
+    fileSize: 1024 * 1024 * 15, // we are allowing only 15 MB files
+  },
 });
+
+// delete object from S3
+const deleteS3Object = async (key) => {
+  const params = {
+    Bucket: "briefly-bucket",
+    Key: key, // filename
+  };
+  return await s3.deleteObject(params).promise();
+};
 
 module.exports = {
   dynamoClient,
@@ -86,4 +114,5 @@ module.exports = {
   getUser,
   addUser,
   upload,
+  deleteS3Object,
 };

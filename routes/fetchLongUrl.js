@@ -1,4 +1,4 @@
-require("dotenv").config({path: '../.env'});
+require("dotenv").config({ path: "../.env" });
 const express = require("express");
 const { getLongUrl, addOrUpdateUrl, deleteUrl } = require("../dynamo");
 const { itemExists } = require("../utils/utils.js");
@@ -16,8 +16,23 @@ module.exports = function (app) {
       //res.json(item);
       if (itemExists(item)) {
         console.log(item["Item"]["long"]);
-        item["Item"]["clicks"]++;
-        console.log("No of clicks are : ," + item["Item"]["clicks"]);
+
+        let clicks = item["Item"]["clicks"];
+        if (typeof clicks === "undefined") {
+          clicks = 0;
+        } else {
+          clicks = +clicks;
+        }
+        clicks++;
+        const newItem = {
+          short: item["Item"]["short"],
+          long: item["Item"]["long"],
+          expiry: item["Item"]["expiry"],
+          clicks: clicks,
+        };
+        const createNewItem = await addOrUpdateUrl(newItem);
+
+        console.log("No of clicks are : " + item["Item"]["clicks"]);
         return res.redirect(item["Item"]["long"]);
       }
 

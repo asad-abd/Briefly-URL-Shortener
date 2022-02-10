@@ -1,22 +1,24 @@
-require("dotenv").config({path: '../.env'});
+require("dotenv").config({ path: "../.env" });
 const express = require("express");
 const cors = require("cors");
 const app = express();
 const { getLongUrl, addOrUpdateUrl, deleteUrl } = require("../dynamo");
 const short_url_gen = require("../utils/short_url.js");
 const validProtocolURL = require("../utils/validity.js");
-const isValidCustomUrl = require("../utils/utils.js");
+const { isValidCustomUrl } = require("../utils/utils.js");
 
 // shorturl creation endpoint
 module.exports = function (app) {
   app.put("/shorten/", async (req, res) => {
     let longUrl = req.body.longUrl;
-    let daysLater = +req.body.expiry;
+    let daysLater = req.body.expiry;
     const customUrl = req.body.customUrl;
 
     // checks if expiry date is mentioned by the user or not
     if (typeof daysLater == "undefined") {
       daysLater = 30;
+    } else {
+      daysLater = +daysLater;
     }
 
     // get expiry date in unix epoch timestamp
@@ -59,7 +61,13 @@ module.exports = function (app) {
               if (Object.keys(item).length !== 0) {
                 continue;
               } else {
-                const item = { short: stg, long: longUrl, expiry: expiryDate,clicks:0 };
+                let clicks = +0;
+                const item = {
+                  short: stg,
+                  long: longUrl,
+                  expiry: expiryDate,
+                  clicks: clicks,
+                };
                 const newItem = await addOrUpdateUrl(item);
                 res.send(process.env.AWS_HOST_URL + item["short"]);
                 console.log("msg : Success");
@@ -90,7 +98,13 @@ module.exports = function (app) {
         if (Object.keys(fetchItem).length !== 0) {
           res.status(400).send("Short Url already taken");
         } else {
-          const item = { short: customUrl, long: longUrl, expiry: expiryDate,clicks:0 };
+          let clicks = +0;
+          const item = {
+            short: customUrl,
+            long: longUrl,
+            expiry: expiryDate,
+            clicks: clicks,
+          };
           try {
             const newItem = await addOrUpdateUrl(item);
             res.send(process.env.AWS_HOST_URL + item["short"]);
